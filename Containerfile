@@ -7,6 +7,9 @@ FROM ghcr.io/defrostediceman/fedora-bootc-server
 # Third party repo
 RUN dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
+# Trying core group first
+RUN dnf group install -y core
+
 # Desktop Enrivonment
 RUN dnf group install -y gnome-desktop 
 
