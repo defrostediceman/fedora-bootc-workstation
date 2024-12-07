@@ -11,7 +11,8 @@ RUN dnf group install -y base-graphical
 
 RUN dnf group install -y container-management 
 
-RUN dnf group install -y core
+# GitHub Actions failing to build when core is installing.
+# RUN dnf group install -y core
 
 RUN dnf group install -y fonts
 
