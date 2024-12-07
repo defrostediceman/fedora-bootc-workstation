@@ -24,6 +24,8 @@ RUN dnf group install -y networkmanager-submodules
 
 RUN dnf group install -y workstation-product 
 
+RUN dnf group install -y container-management
+
 # Required for Logically Bound images, see https://gitlab.com/fedora/bootc/examples/-/tree/main/logically-bound-images/usr/share/containers/systemd
 # RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/
 
