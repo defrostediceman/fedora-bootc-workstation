@@ -4,6 +4,9 @@ FROM ghcr.io/defrostediceman/fedora-bootc-server
 
 # ADD usr usr
 
+# Third party repo
+RUN dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
 # Desktop Enrivonment
 RUN dnf group install -y gnome-desktop 
 
