@@ -8,7 +8,7 @@ FROM ghcr.io/defrostediceman/fedora-bootc-server
 RUN dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # Trying each package from Core group
-RUN dnf install -y audit basesystem bash coreutils curl dhcp-client dnf5 e2fsprogs filesystem glibc hostname iproute iputils kbd less man-db ncurses openssh-clients openssh-server parted policycoreutils procps-ng rootfiles rpm selinux-policy-targeted setup shadow-utils sssd-common sssd-kcm sudo systemd util-linux vim-minimal NetworkManager dnf5-plugins dracut-config-rescue firewalld fwupd plymouth systemd-resolved zram-generator-defaults dracut-config-generic initial-setup initscripts
+RUN dnf install -y audit basesystem bash coreutils curl dhcp-client dnf5 e2fsprogs filesystem glibc hostname iproute iputils kbd less man-db ncurses openssh-clients openssh-server parted policycoreutils procps-ng rpm selinux-policy-targeted setup shadow-utils sssd-common sssd-kcm sudo systemd util-linux vim-minimal NetworkManager dnf5-plugins dracut-config-rescue firewalld fwupd plymouth systemd-resolved zram-generator-defaults dracut-config-generic initial-setup initscripts
 
 # Desktop Enrivonment
 RUN dnf group install -y gnome-desktop 
