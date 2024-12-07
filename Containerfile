@@ -27,7 +27,8 @@ RUN dnf group install -y workstation-product
 # Required for Logically Bound images, see https://gitlab.com/fedora/bootc/examples/-/tree/main/logically-bound-images/usr/share/containers/systemd
 # RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/
 
-RUN flatpak install flathub org.mozilla.firefox
+# Flatpaks not successful during GHA build. Need a spike on this.
+# RUN flatpak install flathub org.mozilla.firefox
 
 # Set DE to start on boot
 RUN systemctl set-default graphical.target 
