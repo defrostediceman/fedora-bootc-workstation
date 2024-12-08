@@ -30,8 +30,6 @@ RUN dnf group install -y networkmanager-submodules
 
 RUN dnf group install -y workstation-product 
 
-RUN dnf group install -y container-management
-
 # Required for Logically Bound images, see https://gitlab.com/fedora/bootc/examples/-/tree/main/logically-bound-images/usr/share/containers/systemd
 # RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/
 
@@ -49,8 +47,15 @@ RUN flatpak install --system --noninteractive --no-deploy flathub \
     com.mattjakeman.ExtensionManager \
     org.signal.Signal
 
+# Create the systemd preset directory if it doesn't exist
+RUN mkdir -p /etc/systemd/system-preset/
+
+# Create a preset file to enable GDM and graphical target
+RUN echo "enable gdm.service" > /etc/systemd/system-preset/80-gdm.preset && \
+    echo "enable graphical.target" > /etc/systemd/system-preset/80-graphical.preset
+
 # Set DE to start on boot
 RUN systemctl set-default graphical.target
 
-# Enable Gnome
-RUN systemctl enable gdm
+# Enable Gnome - this doesnt work in the GitHub Actions Build pipeline
+# RUN systemctl enable gdm
