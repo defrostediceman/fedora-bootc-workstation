@@ -35,8 +35,22 @@ RUN dnf group install -y container-management
 # Required for Logically Bound images, see https://gitlab.com/fedora/bootc/examples/-/tree/main/logically-bound-images/usr/share/containers/systemd
 # RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/
 
-# Flatpaks not successful during GHA build. Need a spike on this.
-# RUN flatpak install flathub org.mozilla.firefox
+# directories required for Flatpak
+RUN mkdir -p /var/roothome /data /var/home /root/.cache/dconf
+
+# add Flathub repo
+RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+# Install Flatpaks 
+RUN flatpak install --system --noninteractive --no-deploy flathub \
+    org.mozilla.firefox \
+    com.usebottles.bottles \
+    com.vscodium.codium-insiders \
+    com.mattjakeman.ExtensionManager \
+    org.signal.Signal
 
 # Set DE to start on boot
-RUN systemctl set-default graphical.target 
+RUN systemctl set-default graphical.target
+
+# Enable Gnome
+RUN systemctl enable gdmsystemctl status gdm
