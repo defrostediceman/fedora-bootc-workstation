@@ -53,4 +53,4 @@ RUN flatpak install --system --noninteractive --no-deploy flathub \
 RUN systemctl set-default graphical.target
 
 # Enable Gnome
-RUN systemctl enable gdmsystemctl status gdm
+RUN systemctl enable gdm
