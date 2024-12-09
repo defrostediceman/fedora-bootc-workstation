@@ -15,7 +15,7 @@ RUN dnf group install -y gnome-desktop
 
 RUN dnf group install -y base-graphical 
 
-RUN dnf group install -y container-management 
+# RUN dnf group install -y container-management 
 
 # GitHub Actions failing to build when core is installing.
 # RUN dnf group install -y core
@@ -24,7 +24,7 @@ RUN dnf group install -y fonts
 
 RUN dnf group install -y hardware-support
 
-RUN dnf group install -y multimedia 
+# RUN dnf group install -y multimedia 
 
 RUN dnf group install -y networkmanager-submodules 
 
@@ -51,11 +51,11 @@ RUN flatpak install --system --noninteractive --no-deploy flathub \
 RUN mkdir -p /etc/systemd/system-preset/
 
 # Create a preset file to enable GDM and graphical target
-RUN echo "enable gdm.service" > /etc/systemd/system-preset/80-gdm.preset && \
-    echo "enable graphical.target" > /etc/systemd/system-preset/80-graphical.preset
+# RUN echo "enable gdm.service" > /etc/systemd/system-preset/80-gdm.preset && \
+#    echo "enable graphical.target" > /etc/systemd/system-preset/80-graphical.preset
 
 # Set DE to start on boot
 RUN systemctl set-default graphical.target
 
 # Enable Gnome - this doesnt work in the GitHub Actions Build pipeline
-# RUN systemctl enable gdm
+RUN systemctl enable gdm
