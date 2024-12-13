@@ -1,4 +1,4 @@
-name: Build and Release ISO
+name: Create Bootc ISO and deloy as GitHub Release
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    name: Create Bootc ISO and deloy as GitHub Release
     permissions:
       contents: write
     
@@ -13,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build ISO
+      - name: Build ISO with Bootc Image Builder
         run: |
           mkdir -p output
           sudo podman run \
@@ -30,13 +31,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bootc-iso
-          path: output/*.iso
+          path: output/bootiso/install.iso
           retention-days: 5
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: output/*.iso
-          draft: false
-          prerelease: false
+          files: output/bootiso/install.iso
+          draft: true
+          prerelease: true
