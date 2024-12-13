@@ -4,6 +4,15 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  pre-cleanup:
+    name: Clean workspace before build
+    runs-on: self-hosted
+    steps:
+      - name: Clean workspace
+        run: |
+          sudo rm -rf ${{ runner.workspace }}/*
+          
   build:
     runs-on: self-hosted
     name: Build bootc ISO and deloy as GitHub Release
@@ -42,8 +51,3 @@ jobs:
           draft: true
           prerelease: true
           
-      - name: Cleanup
-        ## this phase is need to wipe the workspace post image build
-        if: always()
-        run: |
-          sudo rm -rf ${{ runner.workspace }}/*
