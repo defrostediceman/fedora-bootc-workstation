@@ -1,0 +1,3 @@
+[[customizations.user]]
+name = "fedora"
+groups = ["wheel"]
