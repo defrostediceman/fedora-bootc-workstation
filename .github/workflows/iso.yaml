@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Clean workspace
         run: |
-          sudo rm -rf ${{ runner.workspace }}/*
+          sudo rm -rf ${{ runner.workspace }}/${{ github.event.repository.name }}/*
           
   build:
     runs-on: self-hosted
