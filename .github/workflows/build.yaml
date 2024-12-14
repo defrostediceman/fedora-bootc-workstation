@@ -1,4 +1,4 @@
-name: Build Bootable container image for Fedora Server
+name: Build Bootable container image for Fedora Workstation
 
 permissions:
   contents: read
@@ -13,6 +13,7 @@ on:
       - main
     paths-ignore:
       - '**/README.md'
+      - '.github/workflows/**'
 
 jobs:
   build:
