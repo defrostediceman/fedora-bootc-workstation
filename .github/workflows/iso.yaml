@@ -23,7 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build iso with bootc Image Builder
+      - name: Build ISO with bootc Image Builder
         run: |
           mkdir -p output
           sudo podman run \
@@ -35,19 +35,26 @@ jobs:
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
             ghcr.io/${{ github.repository }}:latest
+            
+      - name: Rename ISO
+        run: |
+          cp output/bootiso/install.iso bootc-${{ github.sha }}.iso
 
-      - name: Upload artifact
+      - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bootc-$(date +%Y%m%d)-${{ github.sha }}.iso
-          path: output/bootiso/install.iso
+          name: bootc-${{ github.sha }}.iso
+          path: bootc-${{ github.sha }}.iso
           retention-days: 5
 
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: output/bootiso/install.iso
+          files: bootc-${{ github.sha }}.iso
+          name: "Bootc ISO Build ${{ github.run_number }}"
+          tag_name: v${{ github.run_number }}
+          body: |
+            Bootc ISO build from commit ${{ github.sha }}
+            Built on ${{ github.event.repository.updated_at }}
           draft: true
           prerelease: true
-          
