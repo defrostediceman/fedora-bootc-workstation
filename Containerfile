@@ -1,4 +1,5 @@
-FROM quay.io/fedora/fedora-bootc:41
+# potential issues with 6.12 Kernel and COSMIC.
+FROM quay.io/fedora/fedora-bootc:rawhide
 
 RUN ln -sf /run /var/run && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
