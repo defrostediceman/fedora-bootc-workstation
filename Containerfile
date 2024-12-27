@@ -54,6 +54,10 @@ RUN dnf5 -y install @cosmic-desktop \
 RUN dnf5 -y remove console-login-helper-messages
 
 RUN systemctl disable gdm.service && \
+    systemctl enable fstrim.timer && \ 
+    systemctl enable cockpit.socket && \
+    systemctl enable podman.socket && \
+    systemctl enable podman-auto-update.timer && \
     systemctl enable cosmic-greeter.service && \
     systemctl enable fwupd.service && \
     systemctl set-default graphical.target
