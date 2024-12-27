@@ -1,61 +1,62 @@
-FROM ghcr.io/defrostediceman/fedora-bootc-server
+FROM quay.io/fedora/fedora-bootc:41
 
-# ADD etc etc
+RUN ln -sf /run /var/run && \
+    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
 
-# ADD usr usr
+# Add third party repo & needed to use COPR from DNF5 
+RUN dnf5 install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+        dnf5-plugins \
+        copr
 
-# Third party repo
-RUN dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+# Add Cosmic COPR. Note: this is included in 41 but the COPR ships quicker updates so very Alpha.
+RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
-# Trying each package from Core group
-RUN dnf install -y audit basesystem bash coreutils curl dhcp-client dnf5 e2fsprogs filesystem glibc hostname iproute iputils kbd less man-db ncurses openssh-clients openssh-server parted policycoreutils procps-ng rpm selinux-policy-targeted setup shadow-utils sssd-common sssd-kcm sudo systemd util-linux vim-minimal NetworkManager dnf5-plugins dracut-config-rescue firewalld fwupd plymouth systemd-resolved zram-generator-defaults dracut-config-generic initial-setup initscripts
+# Install groups & packages
+RUN dnf5 -y install @cosmic-desktop \
+        @cosmic-desktop-apps \
+        @multimedia \
+        @networkmanager-submodules \
+        @base-graphical \
+        @container-management \
+        @core \
+        @fonts \
+        @virtualization \
+        @workstation-product \
+        @hardware-support \
+        gstreamer1-plugins-{bad-free,bad-free-libs,good,base} \
+        lame{,-libs} \
+        libjxl \
+        plymouth \
+        plymouth-system-theme \
+        fwupd \
+        gnome-keyring \
+        ptyxis \
+        cockpit \
+        cockpit-podman \ 
+        cockpit-storaged \
+        cockpit-machines \
+        cockpit-networkmanager \
+        cockpit-files \
+        qemu \
+        crun-vm \
+        git \
+        neovim \
+        tmux \
+        bash-completion \
+        buildah \
+        flatpak \
+        flatpak-builder \
+        skopeo \
+        toolbox \
+        && dnf5 clean all
 
-# Desktop Enrivonment
-RUN dnf group install -y gnome-desktop 
+RUN dnf5 -y remove console-login-helper-messages
 
-RUN dnf group install -y base-graphical 
+RUN systemctl disable gdm.service && \
+    systemctl enable cosmic-greeter.service && \
+    systemctl enable fwupd.service
 
-# RUN dnf group install -y container-management 
+RUN ostree container commit
 
-# GitHub Actions failing to build when core is installing.
-# RUN dnf group install -y core
-
-RUN dnf group install -y fonts
-
-RUN dnf group install -y hardware-support
-
-# RUN dnf group install -y multimedia 
-
-RUN dnf group install -y networkmanager-submodules 
-
-RUN dnf group install -y workstation-product 
-
-# Required for Logically Bound images, see https://gitlab.com/fedora/bootc/examples/-/tree/main/logically-bound-images/usr/share/containers/systemd
-# RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/
-
-# directories required for Flatpak
-RUN mkdir -p /var/roothome /data /var/home /root/.cache/dconf
-
-# add Flathub repo
-RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-# Install Flatpaks 
-RUN flatpak install --system --noninteractive --no-deploy flathub \
-    org.mozilla.firefox \
-    com.usebottles.bottles \
-    com.vscodium.codium-insiders \
-    com.mattjakeman.ExtensionManager \
-    org.signal.Signal
-
-# Create the systemd preset directory if it doesn't exist
-RUN mkdir -p /etc/systemd/system-preset/
-
-# Create a preset file to enable GDM and graphical target
-# RUN echo "enable gdm.service" > /etc/systemd/system-preset/80-gdm.preset && \
-#    echo "enable graphical.target" > /etc/systemd/system-preset/80-graphical.preset
-
-# Set DE to start on boot
-RUN systemctl set-default graphical.target
-
-# Enable Gnome - this doesnt work in the GitHub Actions Build pipeline
-RUN systemctl enable gdm
+RUN bootc container lint
