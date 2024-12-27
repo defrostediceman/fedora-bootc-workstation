@@ -55,7 +55,8 @@ RUN dnf5 -y remove console-login-helper-messages
 
 RUN systemctl disable gdm.service && \
     systemctl enable cosmic-greeter.service && \
-    systemctl enable fwupd.service
+    systemctl enable fwupd.service && \
+    systemctl set-default graphical.target
 
 RUN ostree container commit
 
