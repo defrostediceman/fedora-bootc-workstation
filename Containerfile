@@ -1,11 +1,11 @@
-# potential issues with 6.12 Kernel and COSMIC.
+# potential issues with 6.12 Kernel and COSMIC. Rawhide currently shipping with 6.13.0 as at Dec 24. 
 FROM quay.io/fedora/fedora-bootc:rawhide
 
 RUN ln -sf /run /var/run && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
 
-# Add third party repo & needed to use COPR from DNF5 
+# Add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
         dnf5-plugins \
         copr
@@ -14,8 +14,9 @@ RUN dnf5 install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-rel
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
 # Install groups & packages
-RUN dnf5 -y install @cosmic-desktop \
-        @cosmic-desktop-apps \
+RUN dnf5 -y install cosmic-desktop \
+				#@cosmic-desktop
+        #@cosmic-desktop-apps \
         @multimedia \
         @networkmanager-submodules \
         @base-graphical \
@@ -50,8 +51,10 @@ RUN dnf5 -y install @cosmic-desktop \
         flatpak-builder \
         skopeo \
         toolbox \
+				bootc \
         && dnf5 clean all
 
+# Added to remove failed unit logs (stolen from centos-workstation)
 RUN dnf5 -y remove console-login-helper-messages
 
 RUN systemctl disable gdm.service && \
@@ -62,7 +65,5 @@ RUN systemctl disable gdm.service && \
     systemctl enable cosmic-greeter.service && \
     systemctl enable fwupd.service && \
     systemctl set-default graphical.target
-
-RUN ostree container commit
 
 RUN bootc container lint
