@@ -1,22 +1,25 @@
 # potential issues with 6.12 Kernel and COSMIC. Rawhide currently shipping with 6.13.0 as at Dec 24. 
 FROM quay.io/fedora/fedora-bootc:rawhide
 
-RUN ln -sf /run /var/run && \
+COPY etc etc
+
+RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    ln -sr /run /var/run/ && \
     mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
 
 # Add third party RPM repo & packages needed to use COPR from DNF5 
-RUN dnf5 install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+RUN dnf5 install -y \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
         dnf5-plugins \
         copr
 
-# Add Cosmic COPR. Note: this is included in 41 but the COPR ships quicker updates so very Alpha.
-RUN dnf5 copr enable -y ryanabx/cosmic-epoch
+#RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
-# Install groups & packages
-RUN dnf5 -y install cosmic-desktop \
-				#@cosmic-desktop
-        #@cosmic-desktop-apps \
+RUN dnf5 -y install @gnome-desktop \
+				@cosmic-desktop \
+        @cosmic-desktop-apps \
         @multimedia \
         @networkmanager-submodules \
         @base-graphical \
@@ -26,11 +29,8 @@ RUN dnf5 -y install cosmic-desktop \
         @virtualization \
         @workstation-product \
         @hardware-support \
-        gstreamer1-plugins-{bad-free,bad-free-libs,good,base} \
-        lame{,-libs} \
-        libjxl \
-        plymouth \
-        plymouth-system-theme \
+        @workstation-product \
+        bootupd \
         fwupd \
         gnome-keyring \
         ptyxis \
@@ -41,9 +41,12 @@ RUN dnf5 -y install cosmic-desktop \
         cockpit-networkmanager \
         cockpit-files \
         qemu \
+        qemu-kvm \
         crun-vm \
         git \
+        gh \
         neovim \
+        vim-enhanced \
         tmux \
         bash-completion \
         buildah \
@@ -52,18 +55,21 @@ RUN dnf5 -y install cosmic-desktop \
         skopeo \
         toolbox \
 				bootc \
+        fedora-release-ostree-desktop \
+        gnome-shell-extension-appindicator \
+        gnome-shell-extension-dash-to-dock \
+        gnome-tweaks \
+        tuned-ppd \
         && dnf5 clean all
 
-# Added to remove failed unit logs (stolen from centos-workstation)
-RUN dnf5 -y remove console-login-helper-messages
-
-RUN systemctl disable gdm.service && \
+RUN systemctl set-default graphical.target && \
+    systemctl disable gdm.service && \
+    systemctl enable cosmic-greeter.service && \
     systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
     systemctl enable podman-auto-update.timer && \
-    systemctl enable cosmic-greeter.service && \
     systemctl enable fwupd.service && \
-    systemctl set-default graphical.target
+    systemctl disable auditd.service
 
 RUN bootc container lint

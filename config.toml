@@ -1,3 +1,6 @@
-[[customizations.user]]
-name = "fedora"
-groups = ["wheel"]
+[customizations.installer.kickstart]
+contents = """
+%post
+bootc switch --mutate-in-place --transport registry ghcr.io/defrostediceman/fedora-bootc-workstation:latest
+%end
+"""
