@@ -69,4 +69,6 @@ RUN systemctl set-default graphical.target && \
     systemctl enable fwupd.service && \
     systemctl disable auditd.service
 
+RUN systemctl enable --global gdm.service
+
 RUN bootc container lint
