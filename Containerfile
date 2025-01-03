@@ -30,6 +30,7 @@ RUN dnf5 -y install @gnome-desktop \
         fwupd \
         gnome-keyring \
 				gdm \
+        gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
