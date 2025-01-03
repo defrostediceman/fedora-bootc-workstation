@@ -29,6 +29,7 @@ RUN dnf5 -y install @gnome-desktop \
         @virtualization \
         @workstation-product \
         @hardware-support \
+        gdm \
         bootupd \
         fwupd \
         gnome-keyring \
