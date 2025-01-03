@@ -60,7 +60,8 @@ RUN dnf5 -y install @gnome-desktop \
         tuned-ppd \
         && dnf5 clean all
 
-RUN systemctl set-default graphical.target && \
+RUN systemctl enable graphical.target && \
+		systemctl set-default graphical.target && \
 		systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
