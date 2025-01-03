@@ -29,7 +29,7 @@ RUN dnf5 -y install @gnome-desktop \
         @hardware-support \
         fwupd \
         gnome-keyring \
-	gdm \
+				gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
@@ -52,7 +52,7 @@ RUN dnf5 -y install @gnome-desktop \
         flatpak-builder \
         skopeo \
         toolbox \
-	bootc \
+				bootc \
         fedora-release-ostree-desktop \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
@@ -60,10 +60,8 @@ RUN dnf5 -y install @gnome-desktop \
         tuned-ppd \
         && dnf5 clean all
 
-RUN systemctl set-default graphical.target 
-
-RUN systemctl enable gdm.service && \
-    systemctl enable fstrim.timer && \ 
+RUN systemctl set-default graphical.target && \
+		systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
     systemctl enable podman-auto-update.timer && \
