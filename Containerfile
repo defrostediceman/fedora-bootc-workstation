@@ -4,33 +4,29 @@ FROM quay.io/fedora/fedora-bootc:41
 COPY etc etc
 
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
-    #mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
-    #ln -sr /run /var/run/ && \
+#    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
 
 # Add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-        dnf5-plugins \
-        copr
+#        dnf5-plugins \
+#        copr
 
 #RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
 RUN dnf5 -y install @gnome-desktop \
-				@cosmic-desktop \
-        @cosmic-desktop-apps \
         @multimedia \
         @networkmanager-submodules \
         @base-graphical \
         @container-management \
         @core \
         @fonts \
+        @guest-desktop-agents \
         @virtualization \
         @workstation-product \
         @hardware-support \
-        gdm \
-        bootupd \
         fwupd \
         gnome-keyring \
         ptyxis \
@@ -41,6 +37,7 @@ RUN dnf5 -y install @gnome-desktop \
         cockpit-networkmanager \
         cockpit-files \
         qemu \
+        strace \
         qemu-kvm \
         crun-vm \
         git \
@@ -63,9 +60,8 @@ RUN dnf5 -y install @gnome-desktop \
         && dnf5 clean all
 
 RUN systemctl set-default graphical.target && \
-    systemctl enable --global gdm.service && \
+    systemctl enable gdm.service && \
     systemctl disable abrtd.service && \
-    systemctl disable cosmic-greeter.service && \
     systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
