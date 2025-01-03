@@ -26,6 +26,11 @@ jobs:
       REGISTRY: ghcr.io/${{ github.repository_owner }}
    
     steps:
+      - name: Clean up workspace
+        run: |
+          rm -rf $GITHUB_WORKSPACE/*
+          rm -rf $GITHUB_WORKSPACE/.*
+    
       - name: Clone the repository
         uses: actions/checkout@v4
 
@@ -59,4 +64,9 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
+
+      - name: Clean up workspace
+        run: |
+          rm -rf $GITHUB_WORKSPACE/*
+          rm -rf $GITHUB_WORKSPACE/.*
 
