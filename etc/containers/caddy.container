@@ -1,0 +1,13 @@
+[Unit]
+Description=Test web server
+
+[Container]
+Image=docker.io/library/caddy:2.8.4
+PodmanArgs=--storage-opt=additionalimagestore=/usr/lib/bootc/storage
+ContainerName=caddy
+PublishPort=80:80
+#Volume=/etc/caddy/config:/etc/caddy:Z
+#Volume=/etc/caddy/data:/data:Z
+
+[Install]
+WantedBy=default.target

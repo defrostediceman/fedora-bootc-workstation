@@ -1,11 +1,12 @@
 # potential issues with 6.12 Kernel and COSMIC. Rawhide currently shipping with 6.13.0 as at Dec 24. 
-FROM quay.io/fedora/fedora-bootc:rawhide
+# FROM quay.io/fedora/fedora-bootc:41
+FROM quay.io/centos-bootc/centos-bootc:stream10
 
 COPY etc etc
 
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
-    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
-    ln -sr /run /var/run/ && \
+    #mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    #ln -sr /run /var/run/ && \
     mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
 
 # Add third party RPM repo & packages needed to use COPR from DNF5 
@@ -29,7 +30,6 @@ RUN dnf5 -y install @gnome-desktop \
         @virtualization \
         @workstation-product \
         @hardware-support \
-        @workstation-product \
         bootupd \
         fwupd \
         gnome-keyring \
@@ -63,8 +63,9 @@ RUN dnf5 -y install @gnome-desktop \
         && dnf5 clean all
 
 RUN systemctl set-default graphical.target && \
-    systemctl disable gdm.service && \
-    systemctl enable cosmic-greeter.service && \
+    systemctl enable --global gdm.service && \
+    systemctl disable abrtd.service && \
+    systemctl disable cosmic-greeter.service && \
     systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
