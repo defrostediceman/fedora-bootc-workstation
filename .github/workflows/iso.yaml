@@ -14,7 +14,8 @@ jobs:
           sudo rm -rf ${{ runner.workspace }}/${{ github.event.repository.name }}/*
           
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
     name: Build bootc ISO and deloy as GitHub Release
     permissions:
       contents: write
@@ -38,23 +39,23 @@ jobs:
             
       - name: Rename ISO
         run: |
-          cp output/bootiso/install.iso bootc-${{ github.sha }}.iso
+          cp output/bootiso/install.iso fedora-bootc-workstation-${{ github.sha }}.iso
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bootc-${{ github.sha }}.iso
-          path: bootc-${{ github.sha }}.iso
+          name: fedora-bootc-workstation-${{ github.sha }}.iso
+          path: fedora-bootc-workstation-${{ github.sha }}.iso
           retention-days: 5
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: bootc-${{ github.sha }}.iso
+          files: fedora-bootc-workstation-${{ github.sha }}.iso
           name: "Bootc ISO Build ${{ github.run_number }}"
           tag_name: v${{ github.run_number }}
           body: |
             Bootc ISO build from commit ${{ github.sha }}
             Built on ${{ github.event.repository.updated_at }}
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
