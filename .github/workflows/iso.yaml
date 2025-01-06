@@ -35,7 +35,7 @@ jobs:
             -v ${{ github.workspace }}/output:/output \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
-            quay.io/fedora/fedora-bootc:41:latest
+            quay.io/fedora/fedora-bootc:41
             
       - name: Rename ISO
         run: |
