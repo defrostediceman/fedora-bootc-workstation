@@ -55,6 +55,7 @@ RUN dnf5 -y install @gnome-desktop \
         gnome-tweaks \
         tuned-ppd \
         python3.11 \
+        osbuild-selinux \
         && dnf5 clean all
 
 # Flatpak install
