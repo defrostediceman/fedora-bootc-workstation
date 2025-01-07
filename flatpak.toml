@@ -1,0 +1,31 @@
+[[remotes]]
+name = "flathub"
+url = "https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.mozilla.firefox"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.usebottles.bottles"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.github.tchx84.Flatseal"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.protonvpn.www"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.signal.Signal"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.vivaldi.Vivaldi"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.vscodium.codium"
