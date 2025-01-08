@@ -1,4 +1,4 @@
-name: Build Bootable container image for Fedora Workstation
+name: Build bootc image
 
 permissions:
   contents: read

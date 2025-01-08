@@ -1,4 +1,5 @@
-name: Build bootc ISO
+
+name: Build bootc iso
 on:
   workflow_dispatch:
 jobs:
@@ -11,8 +12,9 @@ jobs:
           sudo rm -rf ${{ runner.workspace }}/${{ github.event.repository.name }}/*
           
   build:
-    runs-on: self-hosted
-    name: Build bootc ISO and deploy as GitHub Release
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
+    name: Build bootc iso and deloy as GitHub Release
     permissions:
       contents: write
     
@@ -30,7 +32,7 @@ jobs:
             -v ${{ github.workspace }}/output:/output \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
-            ghcr.io/${{ github.repository }}:latest
+            registry.gitlab.com/fedora/bootc/base-images/fedora-bootc-minimal:rawhide-amd64
             
       - name: Rename and Split ISO
         run: |
@@ -51,7 +53,7 @@ jobs:
           name: "Bootc ISO Build ${{ github.run_number }}"
           tag_name: v${{ github.run_number }}
           body: |
-            Bootc ISO build from commit ${{ github.sha }}
+            Bootc iso build from commit ${{ github.sha }}
             Built on ${{ github.event.repository.updated_at }}
             
             To reassemble the ISO:
@@ -62,5 +64,5 @@ jobs:
                unzip full-image.zip
                ```
             3. On Windows, use 7-Zip or WinZip to open the first part automatically
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
