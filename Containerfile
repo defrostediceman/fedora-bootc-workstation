@@ -29,7 +29,7 @@ RUN dnf5 -y install @gnome-desktop \
         @hardware-support \
         fwupd \
         gnome-keyring \
-				gdm \
+	gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
@@ -37,7 +37,6 @@ RUN dnf5 -y install @gnome-desktop \
         cockpit-machines \
         cockpit-networkmanager \
         cockpit-files \
-        qemu \
         strace \
         qemu-kvm \
         crun-vm \
@@ -47,22 +46,31 @@ RUN dnf5 -y install @gnome-desktop \
         vim-enhanced \
         tmux \
         bash-completion \
-        buildah \
         flatpak \
         flatpak-builder \
-        skopeo \
         toolbox \
-				bootc \
         fedora-release-ostree-desktop \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
         gnome-tweaks \
         tuned-ppd \
+        python3.11 \
+        osbuild-selinux \
         && dnf5 clean all
 
+# Flatpak install
+COPY flatpak.toml .
+
+RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
+    wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
+    chmod +x flatpak-readonlyroot.py && \
+    python3.11 flatpak-readonlyroot.py flatpak.toml && \
+    dnf remove -y python3.11 && \
+    rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome
+
 RUN systemctl enable graphical.target && \
-		systemctl set-default graphical.target && \
-		systemctl enable fstrim.timer && \ 
+    systemctl set-default graphical.target && \
+    systemctl enable fstrim.timer && \ 
     systemctl enable cockpit.socket && \
     systemctl enable podman.socket && \
     systemctl enable podman-auto-update.timer && \
