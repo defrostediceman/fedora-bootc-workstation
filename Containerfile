@@ -62,7 +62,8 @@ RUN dnf5 -y install @gnome-desktop \
 COPY flatpak.toml .
 
 RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-    curl -O https://codeberg.org/HeliumOS/flatpak-readonlyroot/src/branch/master/flatpak-readonlyroot.py && \
+    wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
+    chmod +x flatpak-readonlyroot.py && \
     python3.11 flatpak-readonlyroot.py flatpak.toml && \
     dnf remove -y python3.11 && \
     rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome

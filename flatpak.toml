@@ -4,10 +4,6 @@ url = "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
 [[packages]]
 remote = "flathub"
-app_id = "org.mozilla.firefox"
-
-[[packages]]
-remote = "flathub"
 app_id = "com.usebottles.bottles"
 
 [[packages]]
@@ -29,3 +25,7 @@ app_id = "com.vivaldi.Vivaldi"
 [[packages]]
 remote = "flathub"
 app_id = "com.vscodium.codium"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.mozilla.firefox"
