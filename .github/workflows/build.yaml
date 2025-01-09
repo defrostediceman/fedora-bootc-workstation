@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Free disk space
         run: |
-          sudo apt-get remove -y '^ghc-8.*' '^dotnet-.*' '^llvm-.*' 'php.*' \
+          sudo apt-get remove -y ghc-8.* dotnet-* llvm-* php* \
           azure-cli google-cloud-sdk mono-runtime-common \
           powershell firefox google-chrome-stable microsoft-edge-stable
           sudo apt-get autoremove -y
