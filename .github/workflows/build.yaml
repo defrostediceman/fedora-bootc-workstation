@@ -18,30 +18,46 @@ on:
 jobs:
   build:
     name: Build bootc image
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
     
     env:
       IMAGE_NAME: ${{ github.event.repository.name }}
       REGISTRY: ghcr.io/${{ github.repository_owner }}
    
     steps:
-      - name: Clean up workspace
+      - name: Free disk space
         run: |
-          rm -rf $GITHUB_WORKSPACE/*
-          rm -rf $GITHUB_WORKSPACE/.*
+          sudo apt-get remove -y '^ghc-8.*' '^dotnet-.*' '^llvm-.*' 'php.*' \
+          azure-cli google-cloud-sdk mono-runtime-common \
+          powershell firefox google-chrome-stable microsoft-edge-stable
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          podman system prune -af
+          buildah rm --all
+          buildah rmi --all
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
     
       - name: Clone the repository
         uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
 
       - name: Use buildah bud to create the image
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: latest ${{ github.sha }}
-          containerfiles: |
-            ./Containerfile
+          tags: |
+            latest
+            ${{ github.sha }}
+            ${{ steps.date.outputs.date }}
 
       - name: Workaround open podman-login action issue
         env:
