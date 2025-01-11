@@ -12,8 +12,8 @@ jobs:
           sudo rm -rf ${{ runner.workspace }}/${{ github.event.repository.name }}/*
           
   build:
-    runs-on: ubuntu-latest
-    #runs-on: self-hosted
+    #runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Build bootc iso and deloy as GitHub Release
     permissions:
       contents: write
