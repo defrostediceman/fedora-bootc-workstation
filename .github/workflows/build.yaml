@@ -13,13 +13,12 @@ on:
       - main
     paths-ignore:
       - '**/README.md'
-      - '.github/workflows/**'
+      - './github/*'
 
 jobs:
   build:
     name: Build bootc image
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest 
     
     env:
       IMAGE_NAME: ${{ github.event.repository.name }}
@@ -29,19 +28,14 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v4
 
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-
       - name: Use buildah bud to create the image
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: |
-            latest
-            ${{ github.sha }}
-            ${{ steps.date.outputs.date }}
+          tags: latest ${{ github.sha }}
+          containerfiles: |
+            ./Containerfile
 
       - name: Workaround open podman-login action issue
         env:
@@ -64,9 +58,3 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
-
-      - name: Clean up workspace
-        run: |
-          rm -rf $GITHUB_WORKSPACE/*
-          rm -rf $GITHUB_WORKSPACE/.*
-
