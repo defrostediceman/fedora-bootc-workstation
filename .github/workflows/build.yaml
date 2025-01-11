@@ -26,22 +26,6 @@ jobs:
       REGISTRY: ghcr.io/${{ github.repository_owner }}
    
     steps:
-      - name: Free disk space
-        run: |
-          sudo apt-get remove -y ghc-8.* dotnet-* llvm-* php* \
-          azure-cli google-cloud-sdk mono-runtime-common \
-          powershell firefox google-chrome-stable microsoft-edge-stable
-          sudo apt-get autoremove -y
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-          podman system prune -af
-          buildah rm --all
-          buildah rmi --all
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-    
       - name: Clone the repository
         uses: actions/checkout@v4
 
