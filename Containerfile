@@ -1,5 +1,6 @@
-# potential issues with 6.12 Kernel and COSMIC. Rawhide currently shipping with 6.13.0 as at Dec 24. 
-FROM quay.io/fedora/fedora-bootc:41
+ARG PLATFORM=linux/arm64
+
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:rawhide
 
 COPY etc etc
 
@@ -29,7 +30,7 @@ RUN dnf5 -y install @gnome-desktop \
         @hardware-support \
         fwupd \
         gnome-keyring \
-	gdm \
+	    gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
