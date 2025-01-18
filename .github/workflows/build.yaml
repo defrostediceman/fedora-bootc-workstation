@@ -4,11 +4,9 @@ permissions:
   packages: write
 on:
   schedule:
-    - cron: "0 0 * *6"
+    - cron: "0 0 * * 6"
   workflow_dispatch:
   push:
-    branches:
-      - main
     paths-ignore:
       - '**/README.md'
       - './github/*'
@@ -46,6 +44,13 @@ jobs:
           build-args: |
             PLATFORM=${{ matrix.platform }}
 
+      - name: Workaround open podman-login action issue
+        env:
+          auth: '{ "auths": {} }'
+        run: |
+          mkdir -p $HOME/.docker
+          echo "$auth" > $HOME/.docker/config.json
+      
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
         with:
