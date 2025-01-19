@@ -1,3 +1,4 @@
 bootcbuilder
 output/
 config.test.toml
+*.iso
