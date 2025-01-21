@@ -5,13 +5,13 @@ permissions:
   packages: write
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * 6"
-  workflow_dispatch:
 
 jobs:
   build:
-    name: Build bootc image ARM64
+    name: Build arm64 bootc image
     runs-on: self-hosted
     
     env:
