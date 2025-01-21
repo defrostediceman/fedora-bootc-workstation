@@ -1,22 +1,14 @@
-name: Build bootc images
+name: Build bootc image (ARM64)
 permissions:
   contents: read
   packages: write
 on:
   schedule:
-    - cron: "0 0 * * 6"
+    - cron: "0 0 * *6"
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - '**/README.md'
-      - './github/*'
 jobs:
   build:
-    name: Build bootc image
-    strategy:
-      matrix:
-        platform: ['linux/amd64', 'linux/arm64']
-    #runs-on: ubuntu-latest
+    name: Build bootc image ARM64
     runs-on: self-hosted
     
     env:
@@ -30,20 +22,19 @@ jobs:
       - name: Extract platform suffix
         id: suffix
         run: |
-          # Convert linux/amd64 -> amd64 and linux/arm64 -> arm64
-          SUFFIX=$(echo ${{ matrix.platform }} | cut -d'/' -f2)
+          SUFFIX="arm64"
           echo "SUFFIX=${SUFFIX}" >> $GITHUB_OUTPUT
 
-      - name: Build image for ${{ matrix.platform }}
+      - name: Build image for ARM64
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: latest-${{ steps.suffix.outputs.SUFFIX }} ${{ github.sha }}-${{ steps.suffix.outputs.SUFFIX }}
+          tags: latest-arm64 ${{ github.sha }}-arm64
           containerfiles: |
             ./Containerfile
           build-args: |
-            PLATFORM=${{ matrix.platform }}
+            PLATFORM=linux/arm64
 
       - name: Workaround open podman-login action issue
         env:
