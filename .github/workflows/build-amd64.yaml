@@ -1,7 +1,9 @@
-name: Build bootc image (AMD64)
+name: Build bootc image (amd64)
+
 permissions:
   contents: read
   packages: write
+
 on:
   schedule:
     - cron: "0 0 * *6"
@@ -10,6 +12,7 @@ on:
     paths-ignore:
       - '**/README.md'
       - './github/*'
+
 jobs:
   build:
     name: Build bootc image AMD64
@@ -53,7 +56,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Push to GitHub Container Repository
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@v2

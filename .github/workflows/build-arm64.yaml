@@ -1,11 +1,14 @@
-name: Build bootc image (ARM64)
+name: Build bootc image (arm64
+
 permissions:
   contents: read
   packages: write
+
 on:
   schedule:
     - cron: "0 0 * *6"
   workflow_dispatch:
+
 jobs:
   build:
     name: Build bootc image ARM64
