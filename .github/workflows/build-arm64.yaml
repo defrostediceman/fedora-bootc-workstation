@@ -1,4 +1,4 @@
-name: Build bootc image (arm64
+name: Build bootc image (arm64)
 
 permissions:
   contents: read
