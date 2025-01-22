@@ -1,4 +1,4 @@
-name: Build bootc image
+name: Build bootc image (amd64)
 
 permissions:
   contents: read
@@ -9,16 +9,13 @@ on:
     - cron: "0 0 * * 6"
   workflow_dispatch:
   push:
-    branches:
-      - main
     paths-ignore:
       - '**/README.md'
       - './github/*'
 
 jobs:
   build:
-    name: Build bootc image
-    #runs-on: ubuntu-latest
+    name: Build bootc image AMD64
     runs-on: self-hosted
     
     env:
@@ -29,14 +26,22 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v4
 
-      - name: Use buildah bud to create the image
+      - name: Extract platform suffix
+        id: suffix
+        run: |
+          SUFFIX="amd64"
+          echo "SUFFIX=${SUFFIX}" >> $GITHUB_OUTPUT
+
+      - name: Build image for AMD64
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: latest ${{ github.sha }}
+          tags: latest-amd64 ${{ github.sha }}-amd64
           containerfiles: |
             ./Containerfile
+          build-args: |
+            PLATFORM=linux/amd64
 
       - name: Workaround open podman-login action issue
         env:
@@ -44,7 +49,7 @@ jobs:
         run: |
           mkdir -p $HOME/.docker
           echo "$auth" > $HOME/.docker/config.json
-
+      
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
         with:

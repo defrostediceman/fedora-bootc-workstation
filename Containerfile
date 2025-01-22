@@ -1,11 +1,12 @@
-# potential issues with 6.12 Kernel and COSMIC. Rawhide currently shipping with 6.13.0 as at Dec 24. 
-FROM quay.io/fedora/fedora-bootc:41
+ARG PLATFORM=linux/arm64
+
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:rawhide
 
 COPY etc etc
 
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
 #    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
-    mkdir -p /var/roothome /data /var/home /root/.cache/dconf 
+    mkdir -p /data /var/home /root/.cache/dconf || true
 
 # Add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
@@ -29,7 +30,7 @@ RUN dnf5 -y install @gnome-desktop \
         @hardware-support \
         fwupd \
         gnome-keyring \
-	gdm \
+	    gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
@@ -62,12 +63,15 @@ RUN dnf5 -y install @gnome-desktop \
 # Flatpak install
 COPY flatpak.toml .
 
-RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-    wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
-    chmod +x flatpak-readonlyroot.py && \
-    python3.11 flatpak-readonlyroot.py flatpak.toml && \
-    dnf remove -y python3.11 && \
-    rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome
+RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
+        mkdir -p /var/roothome && \
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
+        wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
+        chmod +x flatpak-readonlyroot.py && \
+        python3.11 flatpak-readonlyroot.py flatpak.toml && \
+        dnf remove -y python3.11 && \
+        rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome ; \
+    fi
 
 RUN systemctl enable graphical.target && \
     systemctl set-default graphical.target && \
