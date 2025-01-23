@@ -50,27 +50,41 @@ RUN dnf5 -y install @gnome-desktop \
         flatpak \
         flatpak-builder \
         toolbox \
+        tar \
         fedora-release-ostree-desktop \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
         gnome-tweaks \
         tuned-ppd \
-        python3.11 \
         osbuild-selinux \
         xclip \
+        fprintd \
+        fprintd-pam \
         && dnf5 clean all
 
-# Flatpak install
+# flatpak config copy
 COPY flatpak.toml .
 
+# flatpak install (amd64 only)
 RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
+        dnf5 install -y python3.11 && \
         mkdir -p /var/roothome && \
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
         wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
         chmod +x flatpak-readonlyroot.py && \
         python3.11 flatpak-readonlyroot.py flatpak.toml && \
-        dnf remove -y python3.11 && \
+        dnf5 remove -y python3.11 && \
         rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome ; \
+    fi
+
+# homebrew install
+RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
+        mkdir -p /var/roothome && \
+        curl --retry 3 -Lo /tmp/brew-install/install.sh https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh && \
+        chmod +x /tmp/brew-install/install.sh && \
+        /tmp/brew-install/install.sh && \
+        tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew && \
+        rm -rf /.dockerenv /home/linuxbrew /root/.cache /var/home
     fi
 
 RUN systemctl enable graphical.target && \
@@ -83,4 +97,5 @@ RUN systemctl enable graphical.target && \
     systemctl disable abrtd.service && \
     systemctl disable auditd.service
 
-RUN bootc container lint
+RUN ostree container commit && \
+    bootc container lint
