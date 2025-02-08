@@ -1,6 +1,6 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:rawhide
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
 
 COPY etc etc
 
