@@ -84,7 +84,7 @@ RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
         chmod +x /tmp/brew-install/install.sh && \
         /tmp/brew-install/install.sh && \
         tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew && \
-        rm -rf /.dockerenv /home/linuxbrew /root/.cache /var/home
+        rm -rf /.dockerenv /home/linuxbrew /root/.cache /var/home ; \
     fi
 
 RUN systemctl enable graphical.target && \
