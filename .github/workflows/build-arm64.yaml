@@ -12,13 +12,16 @@ on:
 jobs:
   build:
     name: Build arm64 bootc image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     
     env:
       IMAGE_NAME: ${{ github.event.repository.name }}
       REGISTRY: ghcr.io/${{ github.repository_owner }}
    
     steps:
+      - name: Delete tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Clone the repository
         uses: actions/checkout@v4
 
