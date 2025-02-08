@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Build bootc image AMD64
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     
     env:
       IMAGE_NAME: ${{ github.event.repository.name }}
