@@ -11,33 +11,23 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
 # add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    dnf5 clean all
 
-RUN dnf5 -y install @gnome-desktop \
-        @multimedia \
+RUN dnf5 install -y \
         @networkmanager-submodules \
-        @base-graphical \
         @container-management \
         @core \
-        @fonts \
-        @guest-desktop-agents \
         @virtualization \
-        @workstation-product \
-        @hardware-support \
         copr \
         dnf5-plugins \
         fwupd \
-        gnome-keyring \
-		gdm \
-        ptyxis \
         cockpit \
         cockpit-podman \ 
         cockpit-storaged \
         cockpit-machines \
         cockpit-networkmanager \
         cockpit-files \
-        strace \
-        qemu-kvm \
         crun-vm \
         git \
         gh \
@@ -49,16 +39,34 @@ RUN dnf5 -y install @gnome-desktop \
         flatpak-builder \
         toolbox \
         tar \
-        fedora-release-ostree-desktop \
-        gnome-shell-extension-appindicator \
-        gnome-shell-extension-dash-to-dock \
-        gnome-tweaks \
-        tuned-ppd \
         osbuild-selinux \
-        xclip \
+        && dnf5 clean all
+
+#  Desktop support
+RUN dnf5 install -y \
+        @base-graphical \
+        @multimedia \
+        @core \
+        @fonts \
+        @workstation-product \
+        @hardware-support \
+        fedora-release-ostree-desktop \
+        ptyxis \
+        gnome-keyring \
         fprintd \
         fprintd-pam \
-        && dnf5 clean all
+        tuned-ppd \
+        xclip && \
+    dnf5 clean all
+
+# Gnome desktop
+RUN dnf5 install -y \
+        @gnome-desktop \
+        gdm \
+        gnome-shell-extension-appindicator \
+        gnome-shell-extension-dash-to-dock \
+        gnome-tweaks && \
+    dnf5 clean all
 
 # Cosmic desktop
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
