@@ -1,11 +1,11 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
 
 COPY etc etc
 
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
-#    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
+    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /data /var/home /root/.cache/dconf || true
 
 # add third party RPM repo & packages needed to use COPR from DNF5 
