@@ -8,6 +8,9 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /data /var/home /root/.cache/dconf || true
 
+# force install rootfiles due to errors.
+RUN dnf install --force -y rootfiles
+
 # add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
