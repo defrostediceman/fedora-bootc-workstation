@@ -24,7 +24,6 @@ RUN dnf5 install -y \
         cockpit-files \
         git \
         gh \
-        vim \
         vim-enhanced \
         tmux \
         bash-completion \
