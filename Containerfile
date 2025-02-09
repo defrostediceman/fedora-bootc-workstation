@@ -1,6 +1,6 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
 
 COPY etc etc
 
@@ -12,10 +12,10 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-#        dnf5-plugins \
-#        copr
+        dnf5-plugins \
+        copr
 
-#RUN dnf5 copr enable -y ryanabx/cosmic-epoch
+RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
 RUN dnf5 -y install @gnome-desktop \
         @multimedia \
@@ -28,9 +28,10 @@ RUN dnf5 -y install @gnome-desktop \
         @virtualization \
         @workstation-product \
         @hardware-support \
+				cosmic-desktop \
         fwupd \
         gnome-keyring \
-	    gdm \
+		    gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
