@@ -8,16 +8,13 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /data /var/home /root/.cache/dconf || true
 
-# force install rootfiles due to errors.
-RUN dnf install --force -y rootfiles
-
 # add third party RPM repo & packages needed to use COPR from DNF5 
-RUN dnf5 install -y \
+RUN dnf5 install --nogpgcheck --assumeyes --best \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
-RUN dnf5 install --nogpgcheck --best --allowerasing -y \
+RUN dnf5 install --assumeyes --best \
         @core \
         copr \
         dnf5-plugins \
@@ -34,7 +31,7 @@ RUN dnf5 install --nogpgcheck --best --allowerasing -y \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
-RUN dnf5 install --nogpgcheck --best --allowerasing -y \
+RUN dnf5 install --assumeyes --best \
         @base-graphical \
         @multimedia \
         @fonts \
@@ -51,7 +48,7 @@ RUN dnf5 install --nogpgcheck --best --allowerasing -y \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Gnome desktop
-RUN dnf5 install -y --nogpgcheck --best --allowerasing \
+RUN dnf5 install --assumeyes --best \
         @gnome-desktop \
         gdm \
         gnome-shell-extension-appindicator \
@@ -61,11 +58,11 @@ RUN dnf5 install -y --nogpgcheck --best --allowerasing \
 
 # Cosmic desktop
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
-    dnf5 install -y --nogpgcheck --best --allowerasing cosmic-desktop && \
+    dnf5 install --assumeyes --best cosmic-desktop && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # containerisation support
-RUN dnf5 install -y --nogpgcheck --best --allowerasing \
+RUN dnf5 install --assumeyes --best \
         @container-management \
         podman \
         buildah \
@@ -78,7 +75,7 @@ RUN dnf5 install -y --nogpgcheck --best --allowerasing \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # virtualisation support
-RUN dnf5 install -y --nogpgcheck --best --allowerasing \
+RUN dnf5 install --assumeyes --best \
         @virtualization \
         cockpit-machines \
         crun-vm && \
