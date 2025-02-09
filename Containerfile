@@ -1,19 +1,23 @@
 ARG PLATFORM=linux/arm64
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:40
+
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
+
 COPY etc etc
+
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /data /var/home /root/.cache/dconf || true
 
-# add third party RPM repo & packages
-RUN dnf install -y \
+# add third party RPM repo & packages needed to use COPR from DNF5 
+RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
-RUN dnf install -y \
+RUN dnf5 install --nogpgcheck --best --allowerasing -y \
         @core \
-        dnf-plugins-core \
+        copr \
+        dnf5-plugins \
         fwupd \
         cockpit \
         cockpit-networkmanager \
@@ -24,10 +28,10 @@ RUN dnf install -y \
         bash-completion \
         tmux \
         tar && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
-RUN dnf install -y \
+RUN dnf5 install --nogpgcheck --best --allowerasing -y \
         @base-graphical \
         @multimedia \
         @fonts \
@@ -41,25 +45,24 @@ RUN dnf install -y \
         fprintd-pam \
         tuned-ppd \
         xclip && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Gnome desktop
-RUN dnf install -y \
+RUN dnf5 install -y --nogpgcheck --best --allowerasing \
         @gnome-desktop \
         gdm \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
         gnome-tweaks && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Cosmic desktop
-RUN dnf copr enable -y ryanabx/cosmic-epoch && \
-    dnf install -y cosmic-desktop && \
-    dnf clean all && rm -rf /var/cache/dnf
+RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
+    dnf5 install -y --nogpgcheck --best --allowerasing cosmic-desktop && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # containerisation support
-RUN dnf update -y && \
-        dnf install -y \
+RUN dnf5 install -y --nogpgcheck --best --allowerasing \
         @container-management \
         podman \
         buildah \
@@ -69,28 +72,28 @@ RUN dnf update -y && \
         flatpak-builder \
         osbuild-selinux \
         skopeo && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # virtualisation support
-RUN dnf install -y \
+RUN dnf5 install -y --nogpgcheck --best --allowerasing \
         @virtualization \
         cockpit-machines \
         crun-vm && \
-    dnf clean all && rm -rf /var/cache/dnf
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # flatpak config copy
 COPY flatpak.toml .
 
 # flatpak install (amd64 only)
 RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
-        dnf install -y python3.11 wget && \
+        dnf5 install -y python3.11 wget && \
         mkdir -p /var/roothome && \
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
         wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
         chmod +x flatpak-readonlyroot.py && \
         python3.11 flatpak-readonlyroot.py flatpak.toml && \
-        dnf remove -y python3.11 && \
-        dnf clean all && rm -rf /var/cache/dnf && \
+        dnf5 remove -y python3.11 && \
+        dnf5 clean all && rm -rf /var/cache/libdnf5 && \
         rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome ; \
     fi
 
