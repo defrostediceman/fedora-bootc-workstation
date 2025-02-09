@@ -12,7 +12,7 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    dnf5 clean all
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 RUN dnf5 install -y \
         @core \
@@ -20,28 +20,36 @@ RUN dnf5 install -y \
         dnf5-plugins \
         fwupd \
         cockpit \
-        cockpit-podman \
-        cockpit-storaged \
-        cockpit-machines \
         cockpit-networkmanager \
         cockpit-files \
-        qemu-kvm \
-        podman \
-        buildah \
-        skopeo \
-        crun-vm \
         git \
         gh \
         vim \
         vim-enhanced \
         tmux \
         bash-completion \
+        tar && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# containerisation support
+RUN dnf5 install -y \
+        @container-management \
+        podman \
+        buildah \
+        toolbox \
+        cockpit-podman \
         flatpak \
         flatpak-builder \
-        toolbox \
-        tar \
-        osbuild-selinux && \
-    dnf5 clean all
+        osbuild-selinux \
+        skopeo && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# virtualisation support
+RUN dnf5 install -y \
+        @virtualization \
+        cockpit-machines \
+        crun-vm && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
 RUN dnf5 install -y \
@@ -58,7 +66,7 @@ RUN dnf5 install -y \
         fprintd-pam \
         tuned-ppd \
         xclip && \
-    dnf5 clean all
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Gnome desktop
 RUN dnf5 install -y \
@@ -67,12 +75,12 @@ RUN dnf5 install -y \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
         gnome-tweaks && \
-    dnf5 clean all
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Cosmic desktop
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
     dnf5 install -y cosmic-desktop && \
-    dnf5 clean all
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # flatpak config copy
 COPY flatpak.toml .
@@ -86,6 +94,7 @@ RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
         chmod +x flatpak-readonlyroot.py && \
         python3.11 flatpak-readonlyroot.py flatpak.toml && \
         dnf5 remove -y python3.11 && \
+        dnf5 clean all && rm -rf /var/cache/libdnf5 && \
         rm -rdf flatpak-readonlyroot.py flatpak.toml /var/roothome ; \
     fi
 
