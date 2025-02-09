@@ -29,3 +29,7 @@ app_id = "com.vscodium.codium"
 [[packages]]
 remote = "flathub"
 app_id = "org.mozilla.firefox"
+
+[[packages]]
+remote = "flathub"
+app_id = "me.proton.Pass"

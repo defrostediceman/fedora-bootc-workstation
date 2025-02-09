@@ -2,6 +2,6 @@
 contents = """
 graphical
 %post
-bootc switch --mutate-in-place --transport registry ghcr.io/defrostediceman/fedora-bootc-workstation:latest
+bootc switch --mutate-in-place --transport registry ghcr.io/defrostediceman/fedora-bootc-workstation:latest-amd64
 %end
 """

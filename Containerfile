@@ -8,14 +8,10 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
 #    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
     mkdir -p /data /var/home /root/.cache/dconf || true
 
-# Add third party RPM repo & packages needed to use COPR from DNF5 
+# add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-        dnf5-plugins \
-        copr
-
-RUN dnf5 copr enable -y ryanabx/cosmic-epoch
 
 RUN dnf5 -y install @gnome-desktop \
         @multimedia \
@@ -28,10 +24,11 @@ RUN dnf5 -y install @gnome-desktop \
         @virtualization \
         @workstation-product \
         @hardware-support \
-				cosmic-desktop \
+        copr \
+        dnf5-plugins \
         fwupd \
         gnome-keyring \
-		    gdm \
+		gdm \
         ptyxis \
         cockpit \
         cockpit-podman \ 
@@ -44,7 +41,7 @@ RUN dnf5 -y install @gnome-desktop \
         crun-vm \
         git \
         gh \
-        neovim \
+        vim \
         vim-enhanced \
         tmux \
         bash-completion \
@@ -62,6 +59,11 @@ RUN dnf5 -y install @gnome-desktop \
         fprintd \
         fprintd-pam \
         && dnf5 clean all
+
+# Cosmic desktop
+RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
+    dnf5 install -y cosmic-desktop && \
+    dnf5 clean all
 
 # flatpak config copy
 COPY flatpak.toml .
