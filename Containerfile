@@ -1,6 +1,6 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:rawhide
 
 COPY etc etc
 
@@ -25,7 +25,6 @@ RUN dnf5 install -y \
         git \
         gh \
         vim-enhanced \
-        tmux \
         bash-completion \
         tar && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
