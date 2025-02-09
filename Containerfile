@@ -1,5 +1,5 @@
 ARG PLATFORM=linux/arm64
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:40
 COPY etc etc
 RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
