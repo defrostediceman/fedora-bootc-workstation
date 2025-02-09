@@ -1,6 +1,6 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:rawhide
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
 
 COPY etc etc
 
@@ -28,27 +28,6 @@ RUN dnf5 install -y \
         bash-completion \
         tmux \
         tar && \
-    dnf5 clean all && rm -rf /var/cache/libdnf5
-
-# containerisation support
-RUN dnf5 update -y && \
-        dnf5 install -y \
-        @container-management \
-        podman \
-        buildah \
-        toolbox \
-        cockpit-podman \
-        flatpak \
-        flatpak-builder \
-        osbuild-selinux \
-        skopeo && \
-    dnf5 clean all && rm -rf /var/cache/libdnf5
-
-# virtualisation support
-RUN dnf5 install -y \
-        @virtualization \
-        cockpit-machines \
-        crun-vm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
@@ -80,6 +59,27 @@ RUN dnf5 install -y \
 # Cosmic desktop
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
     dnf5 install -y cosmic-desktop && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# containerisation support
+RUN dnf5 update -y && \
+        dnf5 install -y \
+        @container-management \
+        podman \
+        buildah \
+        toolbox \
+        cockpit-podman \
+        flatpak \
+        flatpak-builder \
+        osbuild-selinux \
+        skopeo && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# virtualisation support
+RUN dnf5 install -y \
+        @virtualization \
+        cockpit-machines \
+        crun-vm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # flatpak config copy
