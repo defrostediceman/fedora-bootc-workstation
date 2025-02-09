@@ -15,19 +15,20 @@ RUN dnf5 install -y \
     dnf5 clean all
 
 RUN dnf5 install -y \
-        @networkmanager-submodules \
-        @container-management \
         @core \
-        @virtualization \
         copr \
         dnf5-plugins \
         fwupd \
         cockpit \
-        cockpit-podman \ 
+        cockpit-podman \
         cockpit-storaged \
         cockpit-machines \
         cockpit-networkmanager \
         cockpit-files \
+        qemu-kvm \
+        podman \
+        buildah \
+        skopeo \
         crun-vm \
         git \
         gh \
@@ -39,17 +40,17 @@ RUN dnf5 install -y \
         flatpak-builder \
         toolbox \
         tar \
-        osbuild-selinux \
-        && dnf5 clean all
+        osbuild-selinux && \
+    dnf5 clean all
 
 #  Desktop support
 RUN dnf5 install -y \
         @base-graphical \
         @multimedia \
-        @core \
         @fonts \
         @workstation-product \
         @hardware-support \
+        @networkmanager-submodules \
         fedora-release-ostree-desktop \
         ptyxis \
         gnome-keyring \
@@ -78,7 +79,7 @@ COPY flatpak.toml .
 
 # flatpak install (amd64 only)
 RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
-        dnf5 install -y python3.11 && \
+        dnf5 install -y python3.11 wget && \
         mkdir -p /var/roothome && \
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
         wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
