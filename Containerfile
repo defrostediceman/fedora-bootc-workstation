@@ -10,10 +10,8 @@ RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ &&
 
 # add third party RPM repo & packages needed to use COPR from DNF5 
 RUN dnf5 install -y \
-        #https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-        #https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-rawhide.noarch.rpm \
-        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-rawhide.noarch.rpm && \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 RUN dnf5 install -y \
@@ -33,7 +31,8 @@ RUN dnf5 install -y \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # containerisation support
-RUN dnf5 install -y \
+RUN dnf5 update -y && \
+        dnf5 install -y \
         @container-management \
         podman \
         buildah \
