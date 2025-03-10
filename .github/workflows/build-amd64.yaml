@@ -40,7 +40,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: latest-amd64 ${{ github.sha }}-amd64
+          tags: latest ${{ github.sha }} latest-amd64 ${{ github.sha }}-amd64
           containerfiles: |
             ./Containerfile
           build-args: |
