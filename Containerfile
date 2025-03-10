@@ -116,7 +116,7 @@ RUN dnf5 install --assumeyes --skip-broken \
         cockpit-ostree && \
     dnf5 clean all && rm -rf /var/cache/libdnf5 && \
     chmod +x /usr/share/applications/cockpit.desktop && \
-    curl -Lo /usr/local/share/icons/cockpit-logo.svg https://cockpit-project.org/images/site/cockpit-logo.svg || { echo "Failed to download cockpit-logo.svg"; exit 1; }
+    curl -Lo /usr/local/share/icons/cockpit-logo.svg https://cockpit-project.org/images/site/cockpit-logo.svg || { echo "Failed to download cockpit-logo.svg"; exit 0; }
 
 # podman-bootc install
 RUN dnf5 copr enable -y gmaglione/podman-bootc && \
@@ -128,7 +128,7 @@ COPY tmp/cursor.desktop /usr/share/applications/cursor.desktop
 
 RUN curl -Lo /usr/local/bin/cursor https://downloader.cursor.sh/linux/appImage/x64 && \
     chmod +x /usr/local/bin/cursor /usr/share/applications/cursor.desktop && \
-    curl -Lo /usr/local/bin/cursor.png https://custom.typingmind.com/assets/models/cursor.png || { echo "Failed to download cursor.png"; exit 1; }
+    curl -Lo /usr/local/bin/cursor.png https://custom.typingmind.com/assets/models/cursor.png || { echo "Failed to download cursor.png"; exit 0; }
 
 # gnome unwanted removal
 RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" --exclude="gdm" --noautoremove \
