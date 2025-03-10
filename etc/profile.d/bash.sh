@@ -1,12 +1,15 @@
 #!/bin/bash
 
-# colours
-PURPLE1="\[\033[38;5;54m\]"   # Dark purple
-PURPLE2="\[\033[38;5;93m\]"   # Medium purple
-PURPLE3="\[\033[38;5;147m\]"  # Light purple
-LIGHT_GREY="\[\033[38;5;250m\]" # Light grey
-RESET="\[\033[0m\]"          # Reset to default color
-PS1="${PURPLE1}\t ${PURPLE2}\u@\h ${PURPLE3}\w${LIGHT_GREY}\$(git_branch)${RESET}$ "
+# Fedora colors
+FEDORA_BLUE="\[\033[38;5;27m\]"  # Fedora blue
+FEDORA_NAVY="\[\033[38;5;19m\]"  # Darker blue
+FEDORA_LIGHT="\[\033[38;5;75m\]" # Light blue
+WHITE="\[\033[38;5;255m\]"       # Bright white
+RESET="\[\033[0m\]"              # Reset to default color
+
+# Fedora-themed prompt
+PS1="${FEDORA_NAVY}\t ${FEDORA_BLUE}\u@\h ${FEDORA_LIGHT}\w${WHITE}\$(git_branch)${RESET}$ "
+
 
 # Git branch in prompt
 git_branch() {
@@ -102,5 +105,10 @@ export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 HISTTIMEFORMAT='%F %T '
 
 # Homebrew path setup for Linux
-eval "$(/var/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-export PATH="/var/home/linuxbrew/.linuxbrew/bin:$PATH"
+if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+elif [ -x "/var/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/var/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    export PATH="/var/home/linuxbrew/.linuxbrew/bin:$PATH"
+fi
