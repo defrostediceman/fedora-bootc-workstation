@@ -16,26 +16,24 @@ on:
 jobs:
   build:
     name: Build bootc image AMD64
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on: X86
     
     env:
       IMAGE_NAME: ${{ github.event.repository.name }}
-      REGISTRY: ghcr.io/${{ github.repository_owner }}
-  
+      REGISTRY: ghcr.io/${{ github.repository_owner }}  
 
     steps:
-    # https://github.com/orgs/community/discussions/25678
       - name: Delete tools folder
-        run: rm -rf /opt/hostedtoolcache
+        if: runner.os == 'Linux' && startsWith(runner.name, 'Ubuntu')
+        run: |
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
 
       - name: Clone the repository
         uses: actions/checkout@v4
-
-      - name: Extract platform suffix
-        id: suffix
-        run: |
-          SUFFIX="amd64"
-          echo "SUFFIX=${SUFFIX}" >> $GITHUB_OUTPUT
 
       - name: Build image for AMD64
         id: build-image
