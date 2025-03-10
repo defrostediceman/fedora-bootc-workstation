@@ -142,7 +142,7 @@ RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" -
         evince \
         mediawriter \
         yelp \
-        malcontent \
+        #malcontent \
         abrt* \
         gnome-abrt \
         rhythmbox \
