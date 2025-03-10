@@ -54,7 +54,7 @@ RUN dnf5 install --assumeyes --skip-broken \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Gnome desktop
-RUN dnf5 install --assumeyes --skip-broken \
+RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
         @gnome-desktop \
         gdm \
         gnome-shell \
@@ -66,17 +66,17 @@ RUN dnf5 install --assumeyes --skip-broken \
         gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-gsconnect \
         gnome-shell-extension-caffeine \
-        #gnome-shell-extension-fullscreen-to-empty-workspace \
+        gnome-shell-extension-fullscreen-to-empty-workspace \
         gnome-shell-extension-workspace-indicator \
-        #gnome-shell-extension-app-indicator \
+        gnome-shell-extension-app-indicator \
         gnome-shell-extension-background-logo \
         gnome-tweaks && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Cosmic desktop
-RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
-    dnf5 install --assumeyes --skip-broken cosmic-desktop && \
-    dnf5 clean all && rm -rf /var/cache/libdnf5
+#RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
+#    dnf5 install --assumeyes --skip-broken cosmic-desktop && \
+#    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # containerisation support
 RUN dnf5 install --assumeyes --skip-broken \
@@ -137,9 +137,21 @@ RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" -
         gnome-weather \
         gnome-calendar \
         gnome-clocks \
+        gnome-contacts \
+        simple-scan \
+        evince \
+        mediawriter \
+        yelp \
+        malcontent \
+        abrt* \
+        gnome-abrt \
+        rhythmbox \
+        totem \
         gnome-characters \
         gnome-calculator \
         gnome-tour \
+        libreoffice* \
+        gnome-connections \
         gnome-font-viewer \
         gnome-system-monitor \
         gnome-remote-desktop \
@@ -158,30 +170,25 @@ RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" -
 COPY flatpak.toml .
 
 # flatpak install (amd64 only)
-RUN if [ "${PLATFORM}" = "linux/amd64" ]; then \
-    dnf5 install -y python3.11 wget && \
+RUN dnf5 install -y python3.11 wget && \
     mkdir -p /var/roothome && chmod 755 /var/roothome && \
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-    wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
-    wget https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak.toml && \
+    curl -Lo flatpak-readonlyroot.py https://codeberg.org/HeliumOS/flatpak-readonlyroot/raw/branch/master/flatpak-readonlyroot.py && \
     chmod +x flatpak-readonlyroot.py && \
     python3.11 flatpak-readonlyroot.py flatpak.toml && \
     dnf5 remove -y python3.11 && \
     dnf5 clean all && rm -rf /var/cache/libdnf5 && \
-    rm -rf flatpak-readonlyroot.py flatpak.toml /var/roothome; \
-fi
+    rm -rf flatpak-readonlyroot.py flatpak.toml
 
 # homebrew install
-RUN if [ "${PLATFORM}" = "linux/amd64" ]; then \
-    mkdir -p /var/roothome && chmod 755 /var/roothome && \
+RUN mkdir -p /var/roothome && chmod 755 /var/roothome && \
     mkdir -p /tmp/brew-install && \
     curl --retry 3 -Lo /tmp/brew-install/install.sh https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh && \
     chmod +x /tmp/brew-install/install.sh && \
     NONINTERACTIVE=1 /tmp/brew-install/install.sh && \
     mkdir -p /usr/share && \
     tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew && \
-    rm -rf /tmp/brew-install /.dockerenv /home/linuxbrew /root/.cache /var/home; \
-fi
+    rm -rf /tmp/brew-install /.dockerenv /root/.cache
 
 RUN systemctl set-default graphical.target && \
     systemctl enable \
