@@ -33,3 +33,51 @@ app_id = "org.mozilla.firefox"
 [[packages]]
 remote = "flathub"
 app_id = "me.proton.Pass"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.raspberrypi.rpi-imager"
+
+[[packages]]
+remote = "flathub"
+app_id = "io.github.nokse22.asciidraw"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.videolan.VLC"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.mattjakeman.ExtensionManager"
+
+[[packages]]
+remote = "flathub"
+app_id = "it.mijorus.gearlever"
+
+[[packages]]
+remote = "flathub"
+app_id = "net.cozic.joplin_desktop"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.wireshark.Wireshark"
+
+[[packages]]
+remote = "flathub"
+app_id = "io.github.pwr_solaar.solaar"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.localsend.localsend_app"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.gnome.font-viewer"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.gnome.Calculator"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.gnome.Extensions"   

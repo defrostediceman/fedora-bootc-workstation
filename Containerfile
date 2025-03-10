@@ -1,37 +1,41 @@
 ARG PLATFORM=linux/arm64
 
-FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:41
+FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
 
 COPY etc etc
 
-RUN ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
-    mkdir -p /var/tmp && chmod -R 1777 /var/tmp && \
-    mkdir -p /data /var/home /root/.cache/dconf || true
+RUN mkdir -p /data /var/home /root/.cache/dconf /root/.gnupg|| true && \
+    #ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
+    #ln -sr /etc/containers/systemd/*.image /usr/lib/bootc/bound-images.d/ && \
+    mkdir -p /var/tmp && chmod -R 1777 /var/tmp
+
 
 # add third party RPM repo & packages needed to use COPR from DNF5 
-RUN dnf5 install --nogpgcheck --assumeyes --best \
+RUN dnf5 remove --assumeyes \
+        subscription-manager \
+        abrt* \
+        setroubleshoot \
+        nano && \
+    dnf5 install --assumeyes --nogpgcheck \
+        #https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
-RUN dnf5 install --assumeyes --best \
+RUN dnf5 install --assumeyes --exclude=rootfiles --skip-broken \
         @core \
         copr \
         dnf5-plugins \
         fwupd \
-        cockpit \
-        cockpit-networkmanager \
-        cockpit-files \
         git \
         gh \
         vim-enhanced \
         bash-completion \
-        tmux \
-        tar && \
+        tmux && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
-RUN dnf5 install --assumeyes --best \
+RUN dnf5 install --assumeyes --skip-broken \
         @base-graphical \
         @multimedia \
         @fonts \
@@ -39,6 +43,7 @@ RUN dnf5 install --assumeyes --best \
         @hardware-support \
         @networkmanager-submodules \
         fedora-release-ostree-desktop \
+        flatpak \
         ptyxis \
         gnome-keyring \
         fprintd \
@@ -48,21 +53,32 @@ RUN dnf5 install --assumeyes --best \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Gnome desktop
-RUN dnf5 install --assumeyes --best \
+RUN dnf5 install --assumeyes --skip-broken \
         @gnome-desktop \
         gdm \
+        gnome-shell \
+        gnome-shell-extension-common \
+        gsettings-desktop-schemas \
+        gnome-settings-daemon \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-dash-to-dock \
+        gnome-shell-extension-blur-my-shell \
+        gnome-shell-extension-gsconnect \
+        gnome-shell-extension-caffeine \
+        #gnome-shell-extension-fullscreen-to-empty-workspace \
+        gnome-shell-extension-workspace-indicator \
+        #gnome-shell-extension-app-indicator \
+        gnome-shell-extension-background-logo \
         gnome-tweaks && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Cosmic desktop
 RUN dnf5 copr enable -y ryanabx/cosmic-epoch && \
-    dnf5 install --assumeyes --best cosmic-desktop && \
+    dnf5 install --assumeyes --skip-broken cosmic-desktop && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # containerisation support
-RUN dnf5 install --assumeyes --best \
+RUN dnf5 install --assumeyes --skip-broken \
         @container-management \
         podman \
         buildah \
@@ -75,10 +91,50 @@ RUN dnf5 install --assumeyes --best \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # virtualisation support
-RUN dnf5 install --assumeyes --best \
+RUN dnf5 install --assumeyes --skip-broken \
         @virtualization \
         cockpit-machines \
         crun-vm && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# Nvidia driver
+RUN dnf5 install --assumeyes --skip-broken \
+        nvidia-driver \
+        nvidia-container-toolkit && \
+    rm /var/log/*.log /var/lib/dnf5 -rf && \
+    dnf5 clean all
+
+# cockpit install
+RUN dnf5 install --assumeyes --skip-broken \
+        cockpit \
+        cockpit-networkmanager \
+        cockpit-files \
+        cockpit-selinux \
+        cockpit-ostree && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# gnome unwanted removal
+RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" --exclude="gdm" --noautoremove \
+        gnome-text-editor \
+        gnome-maps \
+        gnome-weather \
+        gnome-calendar \
+        gnome-clocks \
+        gnome-characters \
+        gnome-calculator \
+        gnome-tour \
+        gnome-font-viewer \
+        gnome-system-monitor \
+        gnome-remote-desktop \
+        gnome-user-docs \
+        papers \
+        snapshot \
+        baobab \
+        virt-manager \
+        gnome-color-manager \
+        gnome-boxes \
+        firefox && \
+    dnf5 autoremove --assumeyes && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # flatpak config copy
@@ -107,15 +163,19 @@ RUN if [ "$PLATFORM" = "linux/amd64" ]; then \
         rm -rf /.dockerenv /home/linuxbrew /root/.cache /var/home ; \
     fi
 
-RUN systemctl enable graphical.target && \
-    systemctl set-default graphical.target && \
-    systemctl enable fstrim.timer && \ 
-    systemctl enable cockpit.socket && \
-    systemctl enable podman.socket && \
-    systemctl enable podman-auto-update.timer && \
-    systemctl enable fwupd.service && \
-    systemctl disable abrtd.service && \
-    systemctl disable auditd.service
+RUN systemctl set-default graphical.target && \
+    systemctl enable \
+        fstrim.timer \
+        cockpit.socket \
+        podman.socket \
+        podman-auto-update.timer \
+        fwupd.service && \
+    systemctl disable \
+        abrtd.service \
+        auditd.service && \
+    systemctl mask \
+        abrtd.service \
+        auditd.service
 
 RUN ostree container commit && \
     bootc container lint

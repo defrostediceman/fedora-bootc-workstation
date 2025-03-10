@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # colours
 PURPLE1="\[\033[38;5;54m\]"   # Dark purple
 PURPLE2="\[\033[38;5;93m\]"   # Medium purple
@@ -54,31 +56,31 @@ alias neovim="vim"
 alias nvim="vim"
 alias vi="vim"
 alias nano="nvim"
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias ~='cd ~'
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
-alias mkdir='mkdir -p'
-alias df='df -h'
-alias du='du -h'
-alias free='free -m'
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git log --oneline'
-alias c='clear'
-alias reload-bash='source /etc/bashrc/.bashrc'
+alias ls="ls --color=auto"
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias ~="cd ~"
+alias grep="grep --color=auto"
+alias egrep="egrep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
+alias mkdir="mkdir -p"
+alias df="df -h"
+alias du="du -h"
+alias free="free -m"
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push"
+alias gl="git log --oneline"
+alias c="clear"
+alias reload-bash="source /etc/bashrc"
 
 # Set vim as default editor
 export VISUAL=vim
@@ -101,3 +103,4 @@ HISTTIMEFORMAT='%F %T '
 
 # Homebrew path setup for Linux
 eval "$(/var/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export PATH="/var/home/linuxbrew/.linuxbrew/bin:$PATH"
