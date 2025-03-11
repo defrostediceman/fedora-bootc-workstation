@@ -204,5 +204,4 @@ RUN systemctl set-default graphical.target && \
         abrtd.service \
         auditd.service
 
-RUN ostree container commit && \
-    bootc container lint
+RUN bootc container lint
