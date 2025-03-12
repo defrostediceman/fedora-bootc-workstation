@@ -2,7 +2,7 @@
 
 # Fedora colors
 FEDORA_BLUE="\[\033[38;5;27m\]"  # Fedora blue
-FEDORA_NAVY="\[\033[38;5;19m\]"  # Darker blue
+FEDORA_NAVY="\[\033[38;5;33m\]" # Medium blue
 FEDORA_LIGHT="\[\033[38;5;75m\]" # Light blue
 WHITE="\[\033[38;5;255m\]"       # Bright white
 RESET="\[\033[0m\]"              # Reset to default color
@@ -49,8 +49,8 @@ extract() {
 }
 
 # Bash completion setup
-if [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+if [ -f /etc/bash_completion.d/ ]; then
+    . /etc/bash_completion.d/*
 fi
 
 # Aliases
@@ -58,7 +58,7 @@ alias docker="podman"
 alias neovim="vim"
 alias nvim="vim"
 alias vi="vim"
-alias nano="nvim"
+alias nano="vim"
 alias ls="ls --color=auto"
 alias ll="ls -alF"
 alias la="ls -A"
@@ -104,11 +104,5 @@ export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 # %T equivalent to %H:%M:%S (24-hours format)
 HISTTIMEFORMAT='%F %T '
 
-# Homebrew path setup for Linux
-if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-elif [ -x "/var/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-    eval "$(/var/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    export PATH="/var/home/linuxbrew/.linuxbrew/bin:$PATH"
-fi
+# GNOME user directories
+export XDG_DATA_DIRS="${XDG_DATA_DIRS}:/usr/local/share:/usr/share:/usr/share/gnome"
