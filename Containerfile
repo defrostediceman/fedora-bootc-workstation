@@ -190,8 +190,14 @@ COPY tmp/user-dirs.defaults /etc/xdg/user-dirs.defaults
 RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
         bcc-tools \
         wireshark-cli \
+        screen \
         arm-image-installer && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
+
+# transient support - enforcing image mode
+RUN echo -e '[etc]\ntransient=true' >> /usr/lib/ostree/prepare-root.conf && \
+    echo -e '[root]\ntransient=true' >> /usr/lib/ostree/prepare-root.conf && \
+    set -x; kver=$(cd /usr/lib/modules && echo *); dracut -vf /usr/lib/modules/$kver/initramfs.img $kver
 
 RUN systemctl set-default graphical.target && \
     systemctl enable \
