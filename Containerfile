@@ -189,16 +189,6 @@ COPY tmp/user-dirs.defaults /etc/xdg/user-dirs.defaults
 # flatpak delete fedora remote
 RUN flatpak remote-delete fedora
 
-# homebrew install
-RUN mkdir -p /var/roothome && chmod 755 /var/roothome && \
-    mkdir -p /tmp/brew-install && \
-    curl --retry 3 -Lo /tmp/brew-install/install.sh https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh && \
-    chmod +x /tmp/brew-install/install.sh && \
-    NONINTERACTIVE=1 /tmp/brew-install/install.sh && \
-    mkdir -p /usr/share && \
-    tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew && \
-    rm -rf /tmp/brew-install /.dockerenv /root/.cache
-
 RUN systemctl set-default graphical.target && \
     systemctl enable \
         fstrim.timer \

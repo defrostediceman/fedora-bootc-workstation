@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# tmux config
+if [ -z "$TMUX" ]; then
+    if tmux has-session -t fedora 2>/dev/null; then
+        tmux attach -t fedora
+    else
+        tmux new-session -s fedora
+    fi
+fi
+
+
 # Fedora colors
 FEDORA_BLUE="\[\033[38;5;27m\]"  # Fedora blue
 FEDORA_NAVY="\[\033[38;5;33m\]" # Medium blue
@@ -84,6 +94,8 @@ alias gp="git push"
 alias gl="git log --oneline"
 alias c="clear"
 alias reload-bash="source /etc/bashrc"
+alias reload-tmux='tmux source-file /etc/tmux.conf'
+
 
 # Set vim as default editor
 export VISUAL=vim
