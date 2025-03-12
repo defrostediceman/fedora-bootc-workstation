@@ -142,7 +142,7 @@ RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" -
         evince \
         mediawriter \
         yelp \
-        #malcontent \
+        #malcontent \ breaks gnome-shell
         abrt* \
         gnome-abrt \
         rhythmbox \
@@ -186,8 +186,12 @@ COPY tmp/gnome-config.sh /etc/gdm/gnome-config.sh
 # nautifilus directory side defaults
 COPY tmp/user-dirs.defaults /etc/xdg/user-dirs.defaults
 
-# flatpak delete fedora remote
-RUN flatpak remote-delete fedora
+# additional packages
+RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
+        bcc-tools \
+        wireshark-cli \
+        arm-image-installer && \
+    dnf5 clean all && rm -rf /var/cache/libdnf5
 
 RUN systemctl set-default graphical.target && \
     systemctl enable \

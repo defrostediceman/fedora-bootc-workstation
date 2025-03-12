@@ -81,3 +81,11 @@ app_id = "org.gnome.Calculator"
 [[packages]]
 remote = "flathub"
 app_id = "org.gnome.Extensions"   
+
+[[packages]]
+remote = "flathub"
+app_id = "org.libreoffice.LibreOffice"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.fedoraproject.MediaWriter"
