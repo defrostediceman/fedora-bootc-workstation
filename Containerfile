@@ -180,6 +180,15 @@ RUN dnf5 install -y python3.11 wget && \
     dnf5 clean all && rm -rf /var/cache/libdnf5 && \
     rm -rf flatpak-readonlyroot.py flatpak.toml
 
+# gnome config
+COPY tmp/gnome-config.sh /etc/gdm/gnome-config.sh
+
+# nautifilus directory side defaults
+COPY tmp/user-dirs.defaults /etc/xdg/user-dirs.defaults
+
+# flatpak delete fedora remote
+RUN flatpak remote-delete fedora
+
 # homebrew install
 RUN mkdir -p /var/roothome && chmod 755 /var/roothome && \
     mkdir -p /tmp/brew-install && \
@@ -196,9 +205,10 @@ RUN systemctl set-default graphical.target && \
         cockpit.socket \
         podman.socket \
         podman-auto-update.timer \
-        fwupd.service && \
+        fwupd.service \
+        tuned.service \
+        gnome-config.service && \
     systemctl disable \
-        abrtd.service \
         auditd.service && \
     systemctl mask \
         abrtd.service \
