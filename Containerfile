@@ -5,19 +5,14 @@ FROM --platform=${PLATFORM} quay.io/fedora/fedora-bootc:42
 
 COPY etc etc
 
-RUN mkdir -p /data /var/home /root/.cache/dconf /root/.gnupg|| true && \
+RUN mkdir -p /data /var/home /root/.cache/dconf /root/.gnupg || true && \
     #ln -sr /etc/containers/systemd/*.container /usr/lib/bootc/bound-images.d/ && \
     #ln -sr /etc/containers/systemd/*.image /usr/lib/bootc/bound-images.d/ && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 
 # add third party RPM repo & packages needed to use COPR from DNF5 
-RUN dnf5 remove --assumeyes \
-        subscription-manager \
-        abrt* \
-        setroubleshoot \
-        nano && \
-    dnf5 install --assumeyes --nogpgcheck \
+RUN dnf5 install --assumeyes --nogpgcheck \
         #https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
@@ -32,11 +27,15 @@ RUN dnf5 install --assumeyes --exclude=rootfiles --skip-broken \
         gh \
         vim-enhanced \
         bash-completion \
+        bcc-tools \
+        wireshark-cli \
+        screen \
+        arm-image-installer 
         tmux && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 #  Desktop support
-RUN dnf5 install --assumeyes --skip-broken \
+RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
         @base-graphical \
         @multimedia \
         @fonts \
@@ -69,8 +68,7 @@ RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
         gnome-shell-extension-fullscreen-to-empty-workspace \
         gnome-shell-extension-workspace-indicator \
         gnome-shell-extension-app-indicator \
-        gnome-shell-extension-background-logo \
-        gnome-tweaks && \
+        gnome-shell-extension-background-logo && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Cosmic desktop
@@ -78,24 +76,19 @@ RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
 #    dnf5 install --assumeyes --skip-broken cosmic-desktop && \
 #    dnf5 clean all && rm -rf /var/cache/libdnf5
 
-# containerisation support
-RUN dnf5 install --assumeyes --skip-broken \
+# container & virtualisation support
+RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
         @container-management \
+        @virtualization \
         podman \
         buildah \
         toolbox \
         cockpit-podman \
+        cockpit-machines \
         flatpak \
         flatpak-builder \
-        osbuild-selinux \
+        osbuild \
         skopeo && \
-    dnf5 clean all && rm -rf /var/cache/libdnf5
-
-# virtualisation support
-RUN dnf5 install --assumeyes --skip-broken \
-        @virtualization \
-        cockpit-machines \
-        crun-vm && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 
 # Nvidia driver
@@ -162,6 +155,10 @@ RUN dnf5 remove --assumeyes --exclude="gnome-shell" --exclude="gnome-desktop*" -
         virt-manager \
         gnome-color-manager \
         gnome-boxes \
+        subscription-manager \
+        abrt* \
+        setroubleshoot \
+        nano \
         firefox && \
     dnf5 autoremove --assumeyes && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
@@ -183,21 +180,10 @@ RUN dnf5 install -y python3.11 wget && \
 # gnome config
 COPY tmp/gnome-config.sh /etc/gdm/gnome-config.sh
 
+RUN chmod +x /etc/gdm/gnome-config.sh
+
 # nautifilus directory side defaults
 COPY tmp/user-dirs.defaults /etc/xdg/user-dirs.defaults
-
-# additional packages
-RUN dnf5 install --assumeyes --skip-broken --skip-unavailable \
-        bcc-tools \
-        wireshark-cli \
-        screen \
-        arm-image-installer && \
-    dnf5 clean all && rm -rf /var/cache/libdnf5
-
-# transient support - enforcing image mode
-RUN echo -e '[etc]\ntransient=true' >> /usr/lib/ostree/prepare-root.conf && \
-    echo -e '[root]\ntransient=true' >> /usr/lib/ostree/prepare-root.conf && \
-    set -x; kver=$(cd /usr/lib/modules && echo *); dracut -vf /usr/lib/modules/$kver/initramfs.img $kver
 
 RUN systemctl set-default graphical.target && \
     systemctl enable \
