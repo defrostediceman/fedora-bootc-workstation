@@ -29,8 +29,10 @@ RUN dnf5 install --assumeyes --exclude=rootfiles --skip-broken \
         bash-completion \
         bcc-tools \
         wireshark-cli \
+        wireguard-tools \
         screen \
-        arm-image-installer 
+        arm-image-installer \ 
+        syncthing \
         tmux && \
     dnf5 clean all && rm -rf /var/cache/libdnf5
 

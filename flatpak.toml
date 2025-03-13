@@ -48,10 +48,6 @@ app_id = "org.videolan.VLC"
 
 [[packages]]
 remote = "flathub"
-app_id = "com.mattjakeman.ExtensionManager"
-
-[[packages]]
-remote = "flathub"
 app_id = "it.mijorus.gearlever"
 
 [[packages]]
@@ -80,12 +76,36 @@ app_id = "org.gnome.Calculator"
 
 [[packages]]
 remote = "flathub"
-app_id = "org.gnome.Extensions"   
-
-[[packages]]
-remote = "flathub"
 app_id = "org.libreoffice.LibreOffice"
 
 [[packages]]
 remote = "flathub"
 app_id = "org.fedoraproject.MediaWriter"
+
+[[packages]]
+remote = "flathub"
+app_id = "com.mattjakeman.ExtensionManager"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.gimp.GIMP"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.zealdocs.Zeal"
+
+[[packages]]
+remote = "flathub"
+app_id = "org.gnome.Papers"
+
+[[packages]]
+remote = "flathub"
+app_id = "io.github.josephmawa.Bella"
+
+[[packages]]
+remote = "flathub"
+app_id = "rest.insomnia.Insomnia"
+
+[[packages]]
+remote = "flathub"
+app_id = "me.kozec.syncthingtk"
